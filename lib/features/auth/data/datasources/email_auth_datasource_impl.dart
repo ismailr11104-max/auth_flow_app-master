@@ -1,0 +1,76 @@
+import 'package:auth_flow_app/core/error/exceptions.dart';
+import 'package:auth_flow_app/features/auth/data/datasources/auth_client.dart';
+import 'package:auth_flow_app/features/auth/data/datasources/email_auth_datasource.dart';
+import 'package:auth_flow_app/features/auth/data/models/user_model.dart';
+
+class EmailAuthDataSourceImpl implements EmailAuthDataSource {
+  final AuthClient _authClient;
+
+  EmailAuthDataSourceImpl(this._authClient);
+
+  @override
+  Future<UserModel> signUpWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      // TODO: Implement signUpWithEmail
+      throw UnimplementedError('signUpWithEmail not implemented yet');
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      throw ServerException('Failed to sign up: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<UserModel> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      // TODO: Implement signInWithEmail
+      throw UnimplementedError('signInWithEmail not implemented yet');
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      throw ServerException('Failed to sign in: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> resetPassword({required String email}) async {
+    try {
+      // TODO: Implement resetPassword
+      throw UnimplementedError('resetPassword not implemented yet');
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      throw ServerException('Failed to reset password: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> verifyEmail({required String token}) async {
+    try {
+      // TODO: Implement verifyEmail
+      throw UnimplementedError('verifyEmail not implemented yet');
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      throw ServerException('Failed to verify email: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> sendMagicLink({required String email}) async {
+    try {
+      // TODO: Implement sendMagicLink
+      throw UnimplementedError('sendMagicLink not implemented yet');
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      throw ServerException('Failed to send magic link: ${e.toString()}');
+    }
+  }
+}
