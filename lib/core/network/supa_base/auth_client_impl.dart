@@ -10,11 +10,12 @@ class AuthClientStub implements AuthClient {
   Future<AuthResponse> signUpWithEmail({
     required String email,
     required String password,
+    required String name,
   }) async {
     return await client.signUp(
       email: email,
       password: password,
-      data: {'name': 'Ali'},
+      data: {'name': name},
     );
   }
 }

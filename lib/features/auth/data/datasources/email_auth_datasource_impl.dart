@@ -12,11 +12,13 @@ class EmailAuthDataSourceImpl implements EmailAuthDataSource {
   Future<UserModel> signUpWithEmail({
     required String email,
     required String password,
+    required String name,
   }) async {
     try {
       final response = await _authClient.signUpWithEmail(
         email: email,
         password: password,
+        name: name,
       );
       if (response.user == null) {
         throw ServerException('Failed to sign up');

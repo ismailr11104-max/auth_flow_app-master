@@ -4,5 +4,6 @@ abstract class AuthClient {
   Future<AuthResponse> signUpWithEmail({
     required String email,
     required String password,
+    required String name,
   });
 }
