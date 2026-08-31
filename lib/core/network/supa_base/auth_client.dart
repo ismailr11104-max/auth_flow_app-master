@@ -6,4 +6,9 @@ abstract class AuthClient {
     required String password,
     required String name,
   });
+
+  Future<AuthResponse> signIn({
+    required String email,
+    required String password,
+  });
 }

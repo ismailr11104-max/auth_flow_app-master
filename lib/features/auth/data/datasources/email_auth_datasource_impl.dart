@@ -21,7 +21,7 @@ class EmailAuthDataSourceImpl implements EmailAuthDataSource {
         name: name,
       );
       if (response.user == null) {
-        throw ServerException('Failed to sign up');
+        throw AuthException('Failed to sign up');
       }
       return UserModel.fromSupaBaseUser(response.user!);
     } on AuthException {
@@ -37,12 +37,19 @@ class EmailAuthDataSourceImpl implements EmailAuthDataSource {
     required String password,
   }) async {
     try {
-      // TODO: Implement signInWithEmail
-      throw UnimplementedError('signInWithEmail not implemented yet');
+      final response = await _authClient.signIn(
+        email: email,
+        password: password,
+      );
+
+      if (response.user == null) {
+        throw ServerException('No account found with this email address.');
+      }
+      return UserModel.fromSupaBaseUser(response.user!);
     } on AuthException {
       rethrow;
     } catch (e) {
-      throw ServerException('Failed to sign in: ${e.toString()}');
+      throw AuthException('Failed to sign in: ${e.toString()}');
     }
   }
 
