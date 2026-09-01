@@ -1,4 +1,5 @@
 import 'package:auth_flow_app/features/auth/data/models/user_model.dart';
+import 'package:auth_flow_app/features/auth/domain/entities/user_entity.dart';
 
 abstract class EmailAuthDataSource {
   Future<UserModel> signUpWithEmail({
@@ -14,7 +15,12 @@ abstract class EmailAuthDataSource {
 
   Future<void> resetPassword({required String email});
 
-  Future<void> verifyEmail({required String token});
+  Future<UserEntity> verifyPasswordResetOtp({
+    required String email,
+    required String otp,
+  });
+
+  Future<void> updatePassword({required String password});
 
   Future<void> sendMagicLink({required String email});
 }
