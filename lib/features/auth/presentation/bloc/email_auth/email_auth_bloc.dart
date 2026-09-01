@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auth_flow_app/features/auth/domain/repositories/email_auth_repository.dart';
 import 'package:auth_flow_app/features/auth/presentation/bloc/email_auth/email_auth_event.dart';
 import 'package:auth_flow_app/features/auth/presentation/bloc/email_auth/email_auth_state.dart';
@@ -10,7 +12,9 @@ class EmailAuthBloc extends Bloc<EmailAuthEvent, EmailAuthState> {
     : super(const EmailAuthInitial()) {
     on<SignUpWithEmailEvent>(_onSignUpWithEmail);
     on<SignInWithEmailEvent>(_onSignInWithEmail);
-    on<ResetPasswordEvent>(_onResetPassword);
+    on<SendPasswordResetEvent>(_onResetPassword);
+    on<VerifyPasswordResetOtpEvent>(_onVerifyPasswordResetOtp);
+    on<UpdatePasswordEvent>(_onUpdatePassword);
     on<SendMagicLinkEvent>(_onSendMagicLink);
   }
 
@@ -50,7 +54,7 @@ class EmailAuthBloc extends Bloc<EmailAuthEvent, EmailAuthState> {
   }
 
   Future<void> _onResetPassword(
-    ResetPasswordEvent event,
+    SendPasswordResetEvent event,
     Emitter<EmailAuthState> emit,
   ) async {
     emit(const EmailAuthLoading());
@@ -59,7 +63,12 @@ class EmailAuthBloc extends Bloc<EmailAuthEvent, EmailAuthState> {
 
     result.fold(
       (failure) => emit(EmailAuthError(message: failure.message)),
-      (_) => emit(const EmailSent(message: 'Password reset email sent')),
+      (_) => emit(
+        PasswordResetOtpSend(
+          message: 'Reset Code Send to ${event.email}',
+          email: event.email,
+        ),
+      ),
     );
   }
 
@@ -73,7 +82,42 @@ class EmailAuthBloc extends Bloc<EmailAuthEvent, EmailAuthState> {
 
     result.fold(
       (failure) => emit(EmailAuthError(message: failure.message)),
-      (_) => emit(const EmailSent(message: 'Magic link sent to your email')),
+      (_) => emit(
+        PasswordResetOtpSend(
+          message: 'Magic link sent to your email',
+          email: event.email,
+        ),
+      ),
+    );
+  }
+
+  FutureOr<void> _onVerifyPasswordResetOtp(
+    VerifyPasswordResetOtpEvent event,
+    Emitter<EmailAuthState> emit,
+  ) async {
+    emit(const EmailAuthLoading());
+
+    final result = await emailAuthRepository.verifyPasswordResetOtp(
+      email: event.email,
+      otp: event.otp,
+    );
+    result.fold(
+      (failure) => emit(EmailAuthError(message: failure.message)),
+      (_) => emit(PasswordResetOtpVerify()),
+    );
+  }
+
+  FutureOr<void> _onUpdatePassword(
+    UpdatePasswordEvent event,
+    Emitter<EmailAuthState> emit,
+  ) async {
+    emit(const EmailAuthLoading());
+    final result = await emailAuthRepository.updatePassword(
+      password: event.password,
+    );
+    result.fold(
+      (failure) => emit(EmailAuthError(message: failure.message)),
+      (_) => emit(const UpdatePassword('Password Update Successfully')),
     );
   }
 }

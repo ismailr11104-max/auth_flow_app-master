@@ -1,5 +1,5 @@
-import 'package:equatable/equatable.dart';
 import 'package:auth_flow_app/features/auth/domain/entities/user_entity.dart';
+import 'package:equatable/equatable.dart';
 
 abstract class EmailAuthState extends Equatable {
   const EmailAuthState();
@@ -34,10 +34,22 @@ class EmailAuthError extends EmailAuthState {
   List<Object?> get props => [message];
 }
 
-class EmailSent extends EmailAuthState {
+class PasswordResetOtpSend extends EmailAuthState {
+  final String message;
+  final String email;
+
+  const PasswordResetOtpSend({required this.message, required this.email});
+
+  @override
+  List<Object?> get props => [message, email];
+}
+
+class PasswordResetOtpVerify extends EmailAuthState {}
+
+class UpdatePassword extends EmailAuthState {
   final String message;
 
-  const EmailSent({required this.message});
+  const UpdatePassword(this.message);
 
   @override
   List<Object?> get props => [message];
