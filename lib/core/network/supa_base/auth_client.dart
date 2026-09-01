@@ -11,4 +11,11 @@ abstract class AuthClient {
     required String email,
     required String password,
   });
+
+  Future<void> resetPassword({required String email});
+  Future<AuthResponse> verifyPasswordResetOtp({
+    required String email,
+    required String otp,
+  });
+  Future<UserResponse> updatePassword({required String password});
 }

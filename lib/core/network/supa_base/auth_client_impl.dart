@@ -26,4 +26,26 @@ class AuthClientStub implements AuthClient {
   }) async {
     return await client.signInWithPassword(email: email, password: password);
   }
+
+  @override
+  Future<void> resetPassword({required String email}) async {
+    return await client.resetPasswordForEmail(email);
+  }
+
+  @override
+  Future<AuthResponse> verifyPasswordResetOtp({
+    required String email,
+    required String otp,
+  }) async {
+    return await client.verifyOTP(
+      email: email,
+      token: otp,
+      type: OtpType.recovery,
+    );
+  }
+
+  @override
+  Future<UserResponse> updatePassword({required String password}) async {
+    return await client.updateUser(UserAttributes(password: password));
+  }
 }
