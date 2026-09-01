@@ -2,6 +2,7 @@ import 'package:auth_flow_app/core/di/injection_container.dart';
 import 'package:auth_flow_app/features/auth/presentation/bloc/session/session_bloc.dart';
 import 'package:auth_flow_app/features/auth/presentation/bloc/session/session_event.dart';
 import 'package:auth_flow_app/features/auth/presentation/bloc/session/session_state.dart';
+import 'package:auth_flow_app/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:auth_flow_app/features/auth/presentation/screens/home_screen.dart';
 import 'package:auth_flow_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:auth_flow_app/features/auth/presentation/screens/signup_screen.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/login': (context) => const LoginPage(),
           '/signup': (context) => const SignupPage(),
+          '/forgot-password': (context) => const ForgetPasswordPage(),
           '/home': (context) => const HomePage(),
         },
       ),

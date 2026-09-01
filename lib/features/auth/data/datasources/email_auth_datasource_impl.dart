@@ -56,7 +56,7 @@ class EmailAuthDataSourceImpl implements EmailAuthDataSource {
   @override
   Future<void> resetPassword({required String email}) async {
     try {
-      _authClient.resetPassword(email: email);
+      await _authClient.resetPassword(email: email);
     } on AuthException {
       rethrow;
     } catch (e) {
