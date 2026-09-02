@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.elgendy.auth_flow_app"
+    namespace = "com.ismail.auth_flow_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
