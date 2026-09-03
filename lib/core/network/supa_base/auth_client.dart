@@ -18,4 +18,8 @@ abstract class AuthClient {
     required String otp,
   });
   Future<UserResponse> updatePassword({required String password});
+  Future<AuthResponse> signInWithIdToken(
+    OAuthProvider provider,
+    String idToken,
+  );
 }

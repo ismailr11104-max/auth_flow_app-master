@@ -16,7 +16,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.elgendy.auth_flow_app"
+        applicationId = "com.ismail.auth_flow_app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
