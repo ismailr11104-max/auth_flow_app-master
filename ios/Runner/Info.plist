@@ -45,18 +45,37 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	   <key>CFBundleURLTypes</key>
-        <array>
-            <dict>
-                <key>CFBundleTypeRole</key>
-                <string>Editor</string>
-                <key>CFBundleURLSchemes</key>
-                <array>
-                    <string>864745492105-suh7brdk2lmbtq3i1rhi1fge5047lr34</string>
-                </array>
-            </dict>
-        </array>
-        <key>GIDClientID</key>
-        <string>864745492105-suh7brdk2lmbtq3i1rhi1fge5047lr34.apps.googleusercontent.com</string>
-</dict>
+	  <!-- Google Sign-In -->
+         <key>GIDClientID</key>
+         <string>864745492105-suh7brdk2lmbtq3i1rhi1fge5047lr34.apps.googleusercontent.com</string>
+
+         <!-- URL Schemes -->
+         <key>CFBundleURLTypes</key>
+         <array>
+
+             <!-- Google Sign-In: Reversed iOS Client ID -->
+             <dict>
+                 <key>CFBundleTypeRole</key>
+                 <string>Editor</string>
+
+                 <key>CFBundleURLSchemes</key>
+                 <array>
+                     <string>com.googleusercontent.apps.864745492105-suh7brdk2lmbtq3i1rhi1fge5047lr34</string>
+                 </array>
+             </dict>
+
+             <!-- Supabase OAuth redirect: GitHub / other providers -->
+             <dict>
+                 <key>CFBundleTypeRole</key>
+                 <string>Editor</string>
+
+                 <key>CFBundleURLSchemes</key>
+                 <array>
+                     <string>com.ismail.authflowapp</string>
+                 </array>
+             </dict>
+
+         </array>
+
+     </dict>
 </plist>

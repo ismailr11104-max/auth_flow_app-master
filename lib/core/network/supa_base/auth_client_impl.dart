@@ -56,4 +56,13 @@ class AuthClientStub implements AuthClient {
   ) async {
     return await client.signInWithIdToken(provider: provider, idToken: idToken);
   }
+
+  @override
+  Future<bool> signInWithOAuth(OAuthProvider provider, String callback) async {
+    return await client.signInWithOAuth(
+      provider,
+      redirectTo: callback,
+      authScreenLaunchMode: LaunchMode.externalApplication,
+    );
+  }
 }
