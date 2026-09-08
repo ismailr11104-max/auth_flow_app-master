@@ -15,10 +15,14 @@ class UserModel extends UserEntity {
   factory UserModel.fromSupaBaseUser(User user) {
     return UserModel(
       id: user.id,
-      email: user.id,
-      isEmailVerified: user.confirmationSentAt != null,
+      email: user.email ?? '',
+      isEmailVerified: user.emailConfirmedAt != null,
       createdAt: DateTime.parse(user.createdAt),
-      displayName: user.userMetadata?['displayName'],
+      displayName:
+          user.userMetadata?['displayName'] ??
+          user.userMetadata?['display_name'] ??
+          user.userMetadata?['full_name'] ??
+          user.userMetadata?['name'],
       phoneNumber: user.phone,
       photoUrl:
           user.userMetadata?['avatar_url'] ?? user.userMetadata?['photo_url'],

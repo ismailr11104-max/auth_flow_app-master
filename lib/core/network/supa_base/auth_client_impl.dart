@@ -65,4 +65,15 @@ class AuthClientStub implements AuthClient {
       authScreenLaunchMode: LaunchMode.externalApplication,
     );
   }
+
+  @override
+  User? get getCurrentUser => client.currentUser;
+
+  @override
+  Future<void> signOut() async {
+    return await client.signOut(scope: SignOutScope.global);
+  }
+
+  @override
+  Stream<AuthState> get authStateChanges => client.onAuthStateChange;
 }

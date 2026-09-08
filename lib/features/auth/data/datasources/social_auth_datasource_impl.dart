@@ -26,7 +26,7 @@ class SocialAuthDataSourceImpl implements SocialAuthDataSource {
     try {
       await ensureInitialized();
       final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
-      final googleAuth = await googleUser.authentication;
+      final googleAuth = googleUser.authentication;
       final idToken = googleAuth.idToken;
 
       if (idToken == null) {

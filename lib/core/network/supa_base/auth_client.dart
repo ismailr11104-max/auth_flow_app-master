@@ -24,4 +24,9 @@ abstract class AuthClient {
   );
 
   Future<bool> signInWithOAuth(OAuthProvider provider, String callback);
+  User? get getCurrentUser;
+
+  Future<void> signOut();
+
+  Stream<AuthState> get authStateChanges;
 }
