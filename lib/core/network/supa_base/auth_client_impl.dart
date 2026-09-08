@@ -76,4 +76,9 @@ class AuthClientStub implements AuthClient {
 
   @override
   Stream<AuthState> get authStateChanges => client.onAuthStateChange;
+
+  @override
+  Future<UserResponse> updateProfile(UserAttributes attributes) async {
+    return await client.updateUser(attributes);
+  }
 }
