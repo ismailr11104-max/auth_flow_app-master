@@ -3,8 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthClientStub implements AuthClient {
   final GoTrueClient client;
-
-  AuthClientStub(this.client);
+  final FunctionsClient function;
+  AuthClientStub(this.client, this.function);
 
   @override
   Future<AuthResponse> signUpWithEmail({
@@ -80,5 +80,14 @@ class AuthClientStub implements AuthClient {
   @override
   Future<UserResponse> updateProfile(UserAttributes attributes) async {
     return await client.updateUser(attributes);
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    final response = await function.invoke('delete_account');
+    await client.signOut(scope: SignOutScope.global);
+    if (response.status != 200) {
+      throw const AuthException('Failed Delete Account');
+    }
   }
 }
