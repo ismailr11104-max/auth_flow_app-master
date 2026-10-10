@@ -27,8 +27,25 @@ import 'package:auth_flow_app/features/auth/presentation/bloc/phone_auth/phone_a
 import 'package:auth_flow_app/features/auth/presentation/bloc/profile/profile_bloc.dart';
 import 'package:auth_flow_app/features/auth/presentation/bloc/session/session_bloc.dart';
 import 'package:auth_flow_app/features/auth/presentation/bloc/social_auth/social_auth_bloc.dart';
+import 'package:auth_flow_app/features/blog/data/data_sources/comment_datasource.dart';
+import 'package:auth_flow_app/features/blog/data/data_sources/comment_datasource_impl.dart';
+import 'package:auth_flow_app/features/blog/data/data_sources/post_crud_datasource.dart';
+import 'package:auth_flow_app/features/blog/data/data_sources/post_crud_datasource_impl.dart';
+import 'package:auth_flow_app/features/blog/data/data_sources/post_query_datasource.dart';
+import 'package:auth_flow_app/features/blog/data/repositories/comment_repository_impl.dart';
+import 'package:auth_flow_app/features/blog/data/repositories/post_crud_repository_impl.dart';
+import 'package:auth_flow_app/features/blog/data/repositories/post_query_repository_impl.dart';
+import 'package:auth_flow_app/features/blog/domain/repositories/post_crud_repository.dart';
+import 'package:auth_flow_app/features/blog/domain/repositories/post_query_repository.dart';
+import 'package:auth_flow_app/features/blog/presentation/bloc/comment/comment_bloc.dart';
+import 'package:auth_flow_app/features/blog/presentation/bloc/post_crud/post_crud_bloc.dart';
+import 'package:auth_flow_app/features/blog/presentation/bloc/post_query/post_query_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../features/blog/data/data_sources/post_query_datasource_impl.dart';
+import '../../features/blog/domain/repositories/comment_repository.dart'
+    show CommentRepository;
 
 final sl = GetIt.instance;
 
@@ -44,6 +61,7 @@ Future<void> initDependencies() async {
     ),
   );
 
+  // ===== Auth DataSources =====
   sl.registerLazySingleton<EmailAuthDataSource>(
     () => EmailAuthDataSourceImpl(sl()),
   );
@@ -60,6 +78,7 @@ Future<void> initDependencies() async {
     () => ProfileDataSourceImpl(sl(), sl()),
   );
 
+  // ===== Auth Repositories =====
   sl.registerLazySingleton<EmailAuthRepository>(
     () => EmailAuthRepositoryImpl(emailAuthDataSource: sl()),
   );
@@ -76,9 +95,37 @@ Future<void> initDependencies() async {
     () => ProfileRepositoryImpl(profileDataSource: sl()),
   );
 
+  // ===== Auth BLoCs =====
   sl.registerFactory(() => EmailAuthBloc(emailAuthRepository: sl()));
   sl.registerFactory(() => SocialAuthBloc(socialAuthRepository: sl()));
   sl.registerFactory(() => PhoneAuthBloc(phoneAuthRepository: sl()));
   sl.registerFactory(() => SessionBloc(sessionRepository: sl()));
   sl.registerFactory(() => ProfileBloc(profileRepository: sl()));
+
+  // ===== Blog DataSources =====
+  sl.registerLazySingleton<PostCrudDataSource>(
+    () => PostCrudDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<PostQueryDataSource>(
+    () => PostQueryDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<CommentDataSource>(
+    () => CommentDataSourceImpl(sl()),
+  );
+
+  // ===== Blog Repositories =====
+  sl.registerLazySingleton<PostCrudRepository>(
+    () => PostCrudRepositoryImpl(postCrudDataSource: sl()),
+  );
+  sl.registerLazySingleton<PostQueryRepository>(
+    () => PostQueryRepositoryImpl(postQueryDataSource: sl()),
+  );
+  sl.registerLazySingleton<CommentRepository>(
+    () => CommentRepositoryImpl(commentDataSource: sl()),
+  );
+
+  // ===== Blog BLoCs =====
+  sl.registerFactory(() => PostCrudBloc(postCrudRepository: sl()));
+  sl.registerFactory(() => PostQueryBloc(postQueryRepository: sl()));
+  sl.registerFactory(() => CommentBloc(commentRepository: sl()));
 }
