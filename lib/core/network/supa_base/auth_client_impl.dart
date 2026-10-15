@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AuthClientStub implements AuthClient {
   final GoTrueClient client;
   final FunctionsClient function;
+
   AuthClientStub(this.client, this.function);
 
   @override
@@ -89,5 +90,16 @@ class AuthClientStub implements AuthClient {
     if (response.status != 200) {
       throw const AuthException('Failed Delete Account');
     }
+  }
+
+  @override
+  User? get currentUser => client.currentUser;
+
+  @override
+  Future<UserResponse> updateUser({String? name, String? avatarUrl}) async {
+    final data = <String, dynamic>{};
+    if (name != null) data['name'] = name;
+    if (avatarUrl != null) data['avatar_url'] = avatarUrl;
+    return await client.updateUser(UserAttributes(data: data));
   }
 }

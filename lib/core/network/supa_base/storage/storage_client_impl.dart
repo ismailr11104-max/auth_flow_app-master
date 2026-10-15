@@ -1,28 +1,32 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:auth_flow_app/core/network/supa_base/storage/storage_client.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StorageClientImpl extends StorageClient {
-  final SupabaseStorageClient clint;
+  final SupabaseClient _client;
 
-  StorageClientImpl(this.clint);
+  StorageClientImpl(this._client);
+
+  @override
+  String getPublicUrl({required String bucket, required String path}) {
+    return _client.storage.from(bucket).getPublicUrl(path);
+  }
 
   @override
   Future<String> uploadFile({
     required String bucket,
     required String path,
-    required File file,
-    required FileOptions options,
+    required Uint8List fileBytes,
+    String? contentType,
   }) async {
-    return await clint.from(bucket).upload(path, file, fileOptions: options);
-  }
-
-  @override
-  Future<String> getFileUrl({
-    required String bucketName,
-    required String path,
-  }) async {
-    return clint.from(bucketName).getPublicUrl(path);
+    await _client.storage
+        .from(bucket)
+        .uploadBinary(
+          path,
+          fileBytes,
+          fileOptions: FileOptions(contentType: contentType, upsert: true),
+        );
+    return _client.storage.from(bucket).getPublicUrl(path);
   }
 }

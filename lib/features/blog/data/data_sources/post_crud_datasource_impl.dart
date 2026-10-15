@@ -1,13 +1,16 @@
+import 'dart:io';
+
 import 'package:auth_flow_app/core/error/exceptions.dart';
 import 'package:auth_flow_app/core/network/supa_base/database_client.dart';
+import 'package:auth_flow_app/core/network/supa_base/storage/storage_client.dart';
 import 'package:auth_flow_app/features/blog/data/data_sources/post_crud_datasource.dart';
 import 'package:auth_flow_app/features/blog/data/model/post_model.dart';
 
 class PostCrudDataSourceImpl implements PostCrudDataSource {
-  // ignore: unused_field
   final DatabaseClient _databaseClient;
+  final StorageClient _storageClient;
 
-  PostCrudDataSourceImpl(this._databaseClient);
+  PostCrudDataSourceImpl(this._databaseClient, this._storageClient);
 
   @override
   Future<PostModel> createPost({
@@ -18,10 +21,15 @@ class PostCrudDataSourceImpl implements PostCrudDataSource {
     String? category,
   }) async {
     try {
-      // TODO: Implement createPost
-      // Use _databaseClient.insert() to insert a new post into the 'posts' table
-      // Then fetch the created post with author join using getPostById()
-      throw UnimplementedError('createPost not implemented yet');
+      final response = await _databaseClient.insert('posts', {
+        'title': title,
+        'content': content,
+        'author_id': authorId,
+        'image_url': imageUrl,
+        'category': category,
+      });
+      final postsId = response['id'] as String;
+      return await getPostById(postsId);
     } on ServerException {
       rethrow;
     } catch (e) {
@@ -32,10 +40,12 @@ class PostCrudDataSourceImpl implements PostCrudDataSource {
   @override
   Future<PostModel> getPostById(String id) async {
     try {
-      // TODO: Implement getPostById
-      // Use _databaseClient.selectById() with columns: '*, author:profiles!author_id(*)'
-      // Parse the response into a PostModel
-      throw UnimplementedError('getPostById not implemented yet');
+      final response = await _databaseClient.selectById(
+        'posts',
+        id,
+        columns: '*,author:profiles!author_id(*)',
+      );
+      return PostModel.fromJson(response);
     } on ServerException {
       rethrow;
     } catch (e) {
@@ -52,11 +62,17 @@ class PostCrudDataSourceImpl implements PostCrudDataSource {
     String? category,
   }) async {
     try {
-      // TODO: Implement updatePost
-      // Build update data map with non-null fields
-      // Use _databaseClient.update() to update the post
-      // Then fetch the updated post with author join using getPostById()
-      throw UnimplementedError('updatePost not implemented yet');
+      final currentPost = await getPostById(id);
+      final data = {
+        'updated_at': DateTime.now().toIso8601String(),
+        'title': title,
+        'content': content,
+        'imageUrl': imageUrl,
+        'category': category,
+      }..removeWhere((key, value) => value == null);
+
+      await _databaseClient.update('posts', id, data);
+      return getPostById(id);
     } on ServerException {
       rethrow;
     } catch (e) {
@@ -67,13 +83,34 @@ class PostCrudDataSourceImpl implements PostCrudDataSource {
   @override
   Future<void> deletePost(String id) async {
     try {
-      // TODO: Implement deletePost
-      // Use _databaseClient.delete() to delete the post from the 'posts' table
-      throw UnimplementedError('deletePost not implemented yet');
+      await _databaseClient.delete('posts', id);
     } on ServerException {
       rethrow;
     } catch (e) {
       throw ServerException('Failed to delete post: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<String> uploadPostImage({
+    required String authorId,
+    required String filePath,
+  }) async {
+    try {
+      final fileBytes = await File(filePath).readAsBytes();
+      final extension = filePath.split('.').last;
+      final storagePath =
+          '$authorId/${DateTime.now().millisecondsSinceEpoch}.$extension';
+      return await _storageClient.uploadFile(
+        bucket: 'posts_image',
+        path: storagePath,
+        fileBytes: fileBytes,
+        contentType: 'image/$extension',
+      );
+    } on ServerException {
+      rethrow;
+    } catch (e) {
+      throw ServerException('Failed to upload post image: ${e.toString()}');
     }
   }
 }

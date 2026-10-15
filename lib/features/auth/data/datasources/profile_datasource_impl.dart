@@ -5,7 +5,6 @@ import 'package:auth_flow_app/core/network/supa_base/auth_client.dart';
 import 'package:auth_flow_app/core/network/supa_base/storage/storage_client.dart';
 import 'package:auth_flow_app/features/auth/data/datasources/profile_datasource.dart';
 import 'package:auth_flow_app/features/auth/data/models/user_model.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
 
 class ProfileDataSourceImpl implements ProfileDataSource {
   final AuthClient _authClient;
@@ -14,20 +13,14 @@ class ProfileDataSourceImpl implements ProfileDataSource {
   ProfileDataSourceImpl(this._authClient, this._storageClient);
 
   @override
-  Future<UserModel> updateProfile({
-    String? displayName,
-    String? photoUrl,
-  }) async {
+  Future<UserModel> updateProfile({String? name, String? avatarUrl}) async {
     try {
-      final currentMetaData = _authClient.getCurrentUser?.userMetadata;
-      final updateMateData = {
-        ...currentMetaData ?? {},
-        if (displayName != null) 'displayName': displayName,
-        if (photoUrl != null) 'avatar_url': photoUrl,
-      };
-      final response = await _authClient.updateProfile(
-        UserAttributes(data: updateMateData),
+      final response = await _authClient.updateUser(
+        name: name,
+        avatarUrl: avatarUrl,
       );
+      if (response.user == null)
+        throw ServerException('Failed to update profile');
       return UserModel.fromSupaBaseUser(response.user!);
     } on AuthException {
       rethrow;
@@ -39,27 +32,22 @@ class ProfileDataSourceImpl implements ProfileDataSource {
   @override
   Future<String> uploadProfilePicture({required String filePath}) async {
     try {
-      final userId = _authClient.getCurrentUser?.id;
-      final fileExt = filePath.split('.').last;
-      await _storageClient.uploadFile(
-        bucket: 'avatar',
-        path: '$userId/avatar.$fileExt',
-        file: File(filePath),
-        options: const FileOptions(upsert: true),
+      final userId = _authClient.currentUser?.id;
+      if (userId == null) throw AuthException('User not authenticated');
+      final file = File(filePath);
+      final fileBytes = await file.readAsBytes();
+      final extension = filePath.split('.').last;
+      final storagePath = '$userId/avatar.$extension';
+      final publicUrl = await _storageClient.uploadFile(
+        bucket: 'avatars',
+        path: storagePath,
+        fileBytes: fileBytes,
+        contentType: 'image/$extension',
       );
-      final url = await _storageClient.getFileUrl(
-        bucketName: 'avatar',
-        path: '$userId/avatar.$fileExt',
-      );
-      await _authClient.updateProfile(
-        UserAttributes(
-          data: {
-            ..._authClient.getCurrentUser?.userMetadata ?? {},
-            'avatar_url': url,
-          },
-        ),
-      );
-      return url;
+      await _authClient.updateUser(avatarUrl: publicUrl);
+      return publicUrl;
+    } on AuthException {
+      rethrow;
     } catch (e) {
       throw ServerException(
         'Failed to upload profile picture: ${e.toString()}',

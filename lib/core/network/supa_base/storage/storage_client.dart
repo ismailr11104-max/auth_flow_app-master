@@ -1,14 +1,12 @@
-import 'dart:io';
-
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:typed_data';
 
 abstract class StorageClient {
   Future<String> uploadFile({
     required String bucket,
     required String path,
-    required File file,
-    required FileOptions options,
+    required Uint8List fileBytes,
+    String? contentType,
   });
 
-  Future<String> getFileUrl({required String bucketName, required String path});
+  String getPublicUrl({required String bucket, required String path});
 }

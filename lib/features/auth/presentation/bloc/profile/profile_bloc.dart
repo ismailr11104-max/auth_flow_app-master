@@ -6,7 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository profileRepository;
 
-  ProfileBloc({required this.profileRepository}) : super(const ProfileInitial()) {
+  ProfileBloc({required this.profileRepository})
+    : super(const ProfileInitial()) {
     on<UpdateProfileEvent>(_onUpdateProfile);
     on<UploadProfilePictureEvent>(_onUploadProfilePicture);
     on<DeleteAccountEvent>(_onDeleteAccount);
@@ -19,8 +20,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(const ProfileLoading());
 
     final result = await profileRepository.updateProfile(
-      displayName: event.displayName,
-      photoUrl: event.photoUrl,
+      avatarUrl: event.photoUrl,
+      name: event.displayName,
     );
 
     result.fold(

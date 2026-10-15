@@ -20,4 +20,9 @@ abstract class PostCrudDataSource {
   });
 
   Future<void> deletePost(String id);
+
+  Future<String> uploadPostImage({
+    required String authorId,
+    required String filePath,
+  });
 }

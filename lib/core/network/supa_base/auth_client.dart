@@ -25,11 +25,12 @@ abstract class AuthClient {
 
   Future<bool> signInWithOAuth(OAuthProvider provider, String callback);
   User? get getCurrentUser;
+  User? get currentUser;
 
   Future<void> signOut();
 
   Stream<AuthState> get authStateChanges;
 
-  Future<UserResponse> updateProfile(UserAttributes attributes);
+  Future<UserResponse> updateUser({String? name, String? avatarUrl});
   Future<void> deleteAccount();
 }

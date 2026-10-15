@@ -6,6 +6,7 @@ abstract class PostQueryRepository {
   Future<Either<Failure, List<PostEntity>>> getPosts({
     int? rangeFrom,
     int? rangeTo,
+    String? category,
   });
 
   Future<Either<Failure, List<PostEntity>>> getMyPosts({

@@ -14,11 +14,13 @@ class PostQueryRepositoryImpl implements PostQueryRepository {
   Future<Either<Failure, List<PostEntity>>> getPosts({
     int? rangeFrom,
     int? rangeTo,
+    String? category,
   }) async {
     try {
       final posts = await postQueryDataSource.getPosts(
         rangeFrom: rangeFrom,
         rangeTo: rangeTo,
+        category: category,
       );
       return Right(posts);
     } on ServerException catch (e) {

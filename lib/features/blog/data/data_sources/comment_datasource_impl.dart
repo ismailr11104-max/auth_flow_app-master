@@ -4,7 +4,6 @@ import 'package:auth_flow_app/features/blog/data/data_sources/comment_datasource
 import 'package:auth_flow_app/features/blog/data/model/comment_model.dart';
 
 class CommentDataSourceImpl implements CommentDataSource {
-  // ignore: unused_field
   final DatabaseClient _databaseClient;
 
   CommentDataSourceImpl(this._databaseClient);
@@ -16,10 +15,18 @@ class CommentDataSourceImpl implements CommentDataSource {
     required String authorId,
   }) async {
     try {
-      // TODO: Implement addComment
-      // Use _databaseClient.insert() to add a comment to the 'comments' table
-      // Then fetch the comment with author join
-      throw UnimplementedError('addComment not implemented yet');
+      final response = await _databaseClient.insert('comments', {
+        'post_id': postId,
+        'content': content,
+        'author_id': authorId,
+      });
+      final commentId = response['id'] as String;
+      final commentData = await _databaseClient.selectById(
+        'comments',
+        commentId,
+        columns: '*,author:profiles!author_id(*)',
+      );
+      return CommentModel.fromJson(commentData);
     } on ServerException {
       rethrow;
     } catch (e) {
@@ -30,15 +37,14 @@ class CommentDataSourceImpl implements CommentDataSource {
   @override
   Future<List<CommentModel>> getComments({required String postId}) async {
     try {
-      // TODO: Implement getComments
-      // Use _databaseClient.select() with:
-      //   table: 'comments'
-      //   columns: '*, author:profiles!author_id(*)'
-      //   filters: {'post_id': postId}
-      //   orderBy: 'created_at'
-      //   ascending: true
-      // Map each result to CommentModel.fromJson()
-      throw UnimplementedError('getComments not implemented yet');
+      final response = await _databaseClient.select(
+        'comments',
+        columns: '*,author:profiles!author_id(*)',
+        filters: {'post_id': postId},
+        orderBy: 'created_at',
+        ascending: true,
+      );
+      return response.map((e) => CommentModel.fromJson(e)).toList();
     } on ServerException {
       rethrow;
     } catch (e) {
@@ -49,9 +55,7 @@ class CommentDataSourceImpl implements CommentDataSource {
   @override
   Future<void> deleteComment(String id) async {
     try {
-      // TODO: Implement deleteComment
-      // Use _databaseClient.delete() to remove the comment
-      throw UnimplementedError('deleteComment not implemented yet');
+      await _databaseClient.delete('comments', id);
     } on ServerException {
       rethrow;
     } catch (e) {

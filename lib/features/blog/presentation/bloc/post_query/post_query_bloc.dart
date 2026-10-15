@@ -9,6 +9,7 @@ class PostQueryBloc extends Bloc<PostQueryEvent, PostQueryState> {
 
   static const int _pageSize = 10;
   List<PostEntity> _allPosts = [];
+  String? _currentCategory;
 
   PostQueryBloc({required this.postQueryRepository})
     : super(PostQueryInitial()) {
@@ -24,10 +25,12 @@ class PostQueryBloc extends Bloc<PostQueryEvent, PostQueryState> {
     Emitter<PostQueryState> emit,
   ) async {
     emit(PostQueryLoading());
+    _currentCategory = event.category;
     _allPosts = [];
     final result = await postQueryRepository.getPosts(
       rangeFrom: 0,
       rangeTo: _pageSize - 1,
+      category: _currentCategory,
     );
     result.fold((failure) => emit(PostQueryError(failure.message)), (posts) {
       _allPosts = posts;
@@ -44,6 +47,7 @@ class PostQueryBloc extends Bloc<PostQueryEvent, PostQueryState> {
     final result = await postQueryRepository.getPosts(
       rangeFrom: rangeFrom,
       rangeTo: rangeTo,
+      category: _currentCategory,
     );
     result.fold((failure) => emit(PostQueryError(failure.message)), (posts) {
       _allPosts = [..._allPosts, ...posts];
@@ -71,7 +75,7 @@ class PostQueryBloc extends Bloc<PostQueryEvent, PostQueryState> {
     Emitter<PostQueryState> emit,
   ) async {
     if (event.query.isEmpty) {
-      add(const GetPostsEvent());
+      add(GetPostsEvent(category: _currentCategory));
       return;
     }
     emit(PostQueryLoading());
@@ -90,6 +94,7 @@ class PostQueryBloc extends Bloc<PostQueryEvent, PostQueryState> {
     final result = await postQueryRepository.getPosts(
       rangeFrom: 0,
       rangeTo: _pageSize - 1,
+      category: event.category ?? _currentCategory,
     );
     result.fold((failure) => emit(PostQueryError(failure.message)), (posts) {
       _allPosts = posts;

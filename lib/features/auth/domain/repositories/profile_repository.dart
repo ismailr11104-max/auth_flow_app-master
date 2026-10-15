@@ -4,8 +4,8 @@ import 'package:dartz/dartz.dart';
 
 abstract class ProfileRepository {
   Future<Either<Failure, UserEntity>> updateProfile({
-    String? displayName,
-    String? photoUrl,
+    String? name,
+    String? avatarUrl,
   });
 
   Future<Either<Failure, String>> uploadProfilePicture({

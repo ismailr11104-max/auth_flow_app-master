@@ -1,5 +1,7 @@
 import 'package:auth_flow_app/core/network/supa_base/auth_client.dart';
 import 'package:auth_flow_app/core/network/supa_base/auth_client_impl.dart';
+import 'package:auth_flow_app/core/network/supa_base/database_client.dart';
+import 'package:auth_flow_app/core/network/supa_base/database_client_impl.dart';
 import 'package:auth_flow_app/core/network/supa_base/storage/storage_client.dart';
 import 'package:auth_flow_app/core/network/supa_base/storage/storage_client_impl.dart';
 import 'package:auth_flow_app/features/auth/data/datasources/email_auth_datasource.dart';
@@ -50,17 +52,19 @@ import '../../features/blog/domain/repositories/comment_repository.dart'
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
-  sl.registerLazySingleton<StorageClient>(
-    () => StorageClientImpl(Supabase.instance.client.storage),
-  );
-
   sl.registerLazySingleton<AuthClient>(
     () => AuthClientStub(
       Supabase.instance.client.auth,
       Supabase.instance.client.functions,
     ),
   );
+  sl.registerLazySingleton<StorageClient>(
+    () => StorageClientImpl(Supabase.instance.client),
+  );
 
+  sl.registerLazySingleton<DatabaseClient>(
+    () => DatabaseClientImpl(Supabase.instance.client),
+  );
   // ===== Auth DataSources =====
   sl.registerLazySingleton<EmailAuthDataSource>(
     () => EmailAuthDataSourceImpl(sl()),
@@ -104,7 +108,7 @@ Future<void> initDependencies() async {
 
   // ===== Blog DataSources =====
   sl.registerLazySingleton<PostCrudDataSource>(
-    () => PostCrudDataSourceImpl(sl()),
+    () => PostCrudDataSourceImpl(sl(), sl()),
   );
   sl.registerLazySingleton<PostQueryDataSource>(
     () => PostQueryDataSourceImpl(sl()),

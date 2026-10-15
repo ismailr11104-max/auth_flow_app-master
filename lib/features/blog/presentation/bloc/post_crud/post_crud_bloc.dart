@@ -18,11 +18,26 @@ class PostCrudBloc extends Bloc<PostCrudEvent, PostCrudState> {
     Emitter<PostCrudState> emit,
   ) async {
     emit(PostCrudLoading());
+
+    String? imageUrl;
+    if (event.imagePath != null) {
+      final uploadResult = await postCrudRepository.uploadPostImage(
+        authorId: event.authorId,
+        filePath: event.imagePath!,
+      );
+      final uploaded = uploadResult.fold<String?>((failure) {
+        emit(PostCrudError(failure.message));
+        return null;
+      }, (url) => url);
+      if (uploaded == null) return;
+      imageUrl = uploaded;
+    }
+
     final result = await postCrudRepository.createPost(
       title: event.title,
       content: event.content,
       authorId: event.authorId,
-      imageUrl: event.imagePath,
+      imageUrl: imageUrl,
       category: event.category,
     );
     result.fold(
@@ -48,11 +63,26 @@ class PostCrudBloc extends Bloc<PostCrudEvent, PostCrudState> {
     Emitter<PostCrudState> emit,
   ) async {
     emit(PostCrudLoading());
+
+    String? imageUrl;
+    if (event.imagePath != null) {
+      final uploadResult = await postCrudRepository.uploadPostImage(
+        authorId: event.id,
+        filePath: event.imagePath!,
+      );
+      final uploaded = uploadResult.fold<String?>((failure) {
+        emit(PostCrudError(failure.message));
+        return null;
+      }, (url) => url);
+      if (uploaded == null) return;
+      imageUrl = uploaded;
+    }
+
     final result = await postCrudRepository.updatePost(
       id: event.id,
       title: event.title,
       content: event.content,
-      imageUrl: event.imagePath,
+      imageUrl: imageUrl,
       category: event.category,
     );
     result.fold(

@@ -8,7 +8,12 @@ abstract class PostQueryEvent extends Equatable {
 }
 
 class GetPostsEvent extends PostQueryEvent {
-  const GetPostsEvent();
+  final String? category;
+
+  const GetPostsEvent({this.category});
+
+  @override
+  List<Object?> get props => [category];
 }
 
 class LoadMorePostsEvent extends PostQueryEvent {
@@ -35,5 +40,10 @@ class SearchPostsEvent extends PostQueryEvent {
 }
 
 class RefreshPostsEvent extends PostQueryEvent {
-  const RefreshPostsEvent();
+  final String? category;
+
+  const RefreshPostsEvent({this.category});
+
+  @override
+  List<Object?> get props => [category];
 }
